@@ -20,6 +20,8 @@ class Scheduling(commands.Cog):
     async def req(self, ctx, game, time, *people: discord.Member):
         author = ctx.message.author
         n = random.randrange(9999)
+        while n in self.reqs:
+            pass
         self.reqs[n] = Request(author, game, time, people)
         for person in people:
             channel = await person.create_dm()
@@ -61,6 +63,27 @@ class Scheduling(commands.Cog):
                     self.reqs.pop(code)
                 channel = await r.author.create_dm()
                 await channel.send(f'@{r.author.name} has declined your request to play {r.game} at {r.time}')
+            except KeyError:
+                await ctx.send(f"error request {code} does not exist")
+        else:
+            await ctx.send("cant use outside of dms")
+
+    @commands.command(help = "reschedule game request [code] [time]")
+    async def reschedule(self, ctx, code: int, time):
+        if isinstance(ctx.message.channel,discord.DMChannel):
+            try:
+                r = self.reqs[code]
+                if not (ctx.message.author in r.people):
+                    await ctx.send(f"you are not a member of this request")
+                    return
+
+                r.people.pop(ctx.message.author)
+                r.people[r.author] = None
+                r.author = ctx.message.author
+                r.time = time
+                for person in r.people:
+                    channel = await person.create_dm()
+                    await channel.send(f'@{r.author.name} has requested a reschedule to {time} for request {code}')
             except KeyError:
                 await ctx.send(f"error request {code} does not exist")
         else:
