@@ -21,7 +21,7 @@ class Scheduling(commands.Cog):
         author = ctx.message.author
         n = random.randrange(9999)
         while n in self.reqs:
-            pass
+            n = random.randrange(9999)
         self.reqs[n] = Request(author, game, time, people)
         for person in people:
             channel = await person.create_dm()
