@@ -37,10 +37,11 @@ class Scheduling(commands.Cog):
                     return
 
                 await ctx.send(f"thank you request {code} has been accepted")
-                r.people.pop(ctx.message.author)
-                if len(r.people) == 0:
+                r.people.pop(ctx.message.author) # remove author from the message
+                # if there are no more people the message is dead and can be deleted
+                if len(r.people) == 0: 
                     self.reqs.pop(code)
-
+                    
                 channel = await r.author.create_dm()
                 await channel.send(f'@{r.author.name} has accepted your request to play {r.game} at {r.time}')
             except KeyError:
@@ -58,8 +59,9 @@ class Scheduling(commands.Cog):
                     return
 
                 await ctx.send(f"thank you request {code} has been declined")
-                r.people.pop(ctx.message.author)
-                if len(r.people) == 0:
+                r.people.pop(ctx.message.author) # remove author from the message
+                # if there are no more people the message is dead and can be deleted
+                if len(r.people) == 0: 
                     self.reqs.pop(code)
                 channel = await r.author.create_dm()
                 await channel.send(f'@{r.author.name} has declined your request to play {r.game} at {r.time}')
